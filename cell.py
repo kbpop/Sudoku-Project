@@ -18,9 +18,10 @@ class Cell:
 
     def draw(self):
         font = pygame.font.Font(None,100)
-        cell_x_surf = font.render(str(self.value), 0, (100,200,0))
-        cell_x_rect = cell_x_surf.get_rect(center=(self.row*800/9 +starting_point_x,self.col*800/9+starting_point_y))
-        self.screen.blit(cell_x_surf, cell_x_rect)
+        if self.value != 0:
+            cell_x_surf = font.render(str(self.value), 0, (100,200,0))
+            cell_x_rect = cell_x_surf.get_rect(center=(self.row*800/9 +starting_point_x,self.col*800/9+starting_point_y))
+            self.screen.blit(cell_x_surf, cell_x_rect)
 
 if __name__ == '__main__':
 
