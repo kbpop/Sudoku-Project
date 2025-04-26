@@ -27,8 +27,9 @@ class Board:
         self.height = height
         self.screen = screen   
         self.difficult = difficulty    
-        self.cells = [[Cell(c,r_index,c_index,screen) for c_index, c in enumerate(r)] for r_index, r in enumerate(generate_sudoku(9,difficulty)) ]
+        self.cells = [[Cell(c,r_index,c_index,screen,c==0) for c_index, c in enumerate(r)] for r_index, r in enumerate(generate_sudoku(9,difficulty)) ]
         self.square_size = width / 9
+        self.selected_cell = None
 
     def draw(self):
         '''Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes. Draws every cell on this board.'''
@@ -55,26 +56,28 @@ class Board:
     def draw_cells(self):
         for r in self.cells:
             for c in r:
-                c.draw()
-                
-
-
-
-
-
+                if c is self.selected_cell:
+                    c.draw_selected()
+                else:
+                    c.draw()
 
     def select(self, row, col):
         '''Marks the cell at (row, col) in the board as the current selected cell.
 	Once a cell has been selected, the user can edit its value or sketched value.'''
-
-        return None
+        if self.cells[row][col].editable:
+            self.selected_cell = self.cells[row][col]
 
     def click(self, x, y):
         '''If a tuple of (x,y) coordinates is within the displayed board, 
         this function returns a tuple of the (row, col) of the cell which was clicked. 
         Otherwise, this function returns None.'''
 
-        return None
+        if x > starting_point_x and x < (starting_point_x+board_width) and y > starting_point_y and y < (starting_point_y+board_height):
+            r = int((x-starting_point_x)//(board_width/9))
+            c = int((y-starting_point_y)//(board_height/9))
+            self.select(r,c)
+        else:
+            self.select_cell = None
 
     def clear(self):
         '''Clears the value cell. 
@@ -87,12 +90,11 @@ class Board:
         '''Sets the sketched value of the current selected cell equal to the user entered value.
 	It will be displayed at the top left corner of the cell using the draw() function.'''
 
-        return None
 
     def place_number(self, value):
         '''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''    
-
-        return None
+        if self.selected_cell:
+            self.selected_cell.set_cell_value(int(value))
 
     def reset_to_original(self):
         '''Resets all cells in the board to their original values (0 if cleared, otherwise the corresponding digit).'''    
@@ -117,19 +119,34 @@ class Board:
     def check_board(self):
         '''Check whether the Sudoku board is solved correctly.'''
 
-        return None
- 
-
+        return False
+    
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode()
     screen.fill((255,255,255))
-    board = Board(800,800,screen,1)
+    board_width = 800
+    board_height = 800
+    board = Board(board_width,board_height,screen,10)
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.quit:
                 pygame.quit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                x,y = event.pos
+                board.click(x,y)
+
+            if event.type == pygame.KEYDOWN:
+                if event.key > 0x10000:
+                    None
+                elif chr(event.key).isdigit():
+                    char = chr(event.key)
+                    if char != '0':
+                        board.place_number(char)
+                elif event.key == pygame.K_RETURN:
+                    print("Enter key pressed!")
 
         pygame.display.update()
         board.draw()
