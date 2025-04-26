@@ -32,6 +32,7 @@ class Board:
         self.difficult = difficulty
         self.cells=[]
         self.selected_cell=None
+        self.original_board=[]
 
 
 
@@ -94,40 +95,79 @@ class Board:
         return None
 
     def place_number(self, value):
-        '''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''
+        if self.selected_cell:
+            self.selected_cell.set_cell_value(value)
+
+        #'''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''
 
         return None
 
     def reset_to_original(self):
-        '''Resets all cells in the board to their original values (0 if cleared, otherwise the corresponding digit).'''
-
+        #'''Resets all cells in the board to their original values (0 if cleared, otherwise the corresponding digit).'''
+        for row in range(9):
+            for col in range(9):
+                self.cells[row][col].value=self.original_board[row][col]
+                self.cells[row][col].sketched_value=0
         return None
 
     def is_full(self):
-        '''Returns a Boolean value indicating whether the board is full or not.'''
-
+        for row in self.cells:
+            for cell in row:
+                if cell.value==0:
+                    return False
+        #'''Returns a Boolean value indicating whether the board is full or not.'''
         return None
 
     def update_board(self):
-        '''Updates the underlying 2D board with the values in all cells.'''
+        board=[]
+        for row in self.cells:
+            row_list=[]
+            for cell in row:
+                row_list.append(cell.value)
+            board.append(row_list)
+        return board
+        #'''Updates the underlying 2D board with the values in all cells.'''
 
-        return None
+        #return None
 
     def find_empty(self):
-        '''Finds an empty cell and returns its row and col as a tuple (x,y).'''
+        for row in range(9):
+            for col in range(9):
+                if self.cells[row][col].value==0:
+                    return row,col
+
+        #'''Finds an empty cell and returns its row and col as a tuple (x,y).'''
 
         return None
 
     def check_board(self):
-        '''Check whether the Sudoku board is solved correctly.'''
+        board=self.update_board()
+        for row in board:
+            if sorted(row)!=list(range(1,10)):
+                return False
+        for col in range(9):
+            column=[board[row][col]for row in range(9)]
+            if sorted(column)!=list(range(1,10)):
+                return False
+        for box_row in range(0,9,3):
+            for box_col in range(0,9,3):
+                box=[]
+                for i in range(3):
+                    for j in range(3):
+                        box.append(board[box_row+i][box_col+j])
+                if sorted(box)!=list(range(1,10)):
+                    return False
 
-        return None
+        #'''Check whether the Sudoku board is solved correctly.'''
+
+        return True
 
 
 if __name__ == '__main__':
 
     pygame.init()
-    screen = pygame.display.set_mode()
+    WIDTH,HEIGHT=600,600
+    screen = pygame.display.set_mode((WIDTH,HEIGHT))
     screen.fill((255, 255, 255))
     board = Board(1000, 1000, screen, 0)
 
