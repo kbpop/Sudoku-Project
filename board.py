@@ -18,7 +18,7 @@ class Board:
         self.original_board=[]
 
 
-        sudoku=generate_sudoku(9,removed)
+
         self.original_board=sudoku
 
         for row in range (9):
