@@ -2,13 +2,11 @@ import pygame
 from cell import Cell
 from sudoku_generator import generate_sudoku
 
-WIDTH = 600
-HEIGHT = 600
-LINE_WIDTH = 15
+LINE_WIDTH = 7
+LINE_WIDTH_BOLD = 15
+
 WIN_LINE_WIDTH = 15
-BOARD_ROWS = 3
-BOARD_COLS = 3
-SQUARE_SIZE = 200
+SQUARE_SIZE = 100
 CIRCLE_RADIUS = 60
 CIRCLE_WIDTH = 15
 CROSS_WIDTH = 25
@@ -16,30 +14,36 @@ SPACE = 55
 RED = (255, 0, 0)
 BG_COLOR = (255, 255, 245)
 LINE_COLOR = (245, 152, 66)
-CIRCLE_COLOR = (155, 155, 155)
-CROSS_COLOR = (66, 66, 66)
-CHIP_FONT = 400
-GAME_OVER_FONT = 40
+
+starting_point_x = 20
+starting_point_y = 20
 
 class Board:
     def __init__(self, width, height, screen, difficulty):
         ''' screen is a window from PyGame.
 	    difficulty is a variable to indicate if the user chose easy medium, or hard.'''
+        self.row_length = 9 
         self.width = width    
-        self.heigth = height
+        self.height = height
         self.screen = screen   
         self.difficult = difficulty    
+        self.square_size = width / 9
 
     def draw(self):
         '''Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes. Draws every cell on this board.'''
         #draw horizontal lines
-        for i in range(1, BOARD_ROWS):
-            pygame.draw.line(screen, LINE_COLOR, (0, i * SQUARE_SIZE), (WIDTH, i * SQUARE_SIZE), LINE_WIDTH)
-        #draw vertical lines
-        for i in range(1, BOARD_COLS):
-            pygame.draw.line( screen, LINE_COLOR, (i * SQUARE_SIZE, 0), (i * SQUARE_SIZE, HEIGHT), LINE_WIDTH)
+        for i in range(0, self.row_length+1):
+            line_width = LINE_WIDTH
+            if (i) % 3 == 0:
+               line_width = LINE_WIDTH_BOLD 
+            pygame.draw.line(screen, LINE_COLOR, (starting_point_x, i * self.square_size+starting_point_y), (self.width+starting_point_x, i * self.square_size+starting_point_y), line_width)
 
-        return None
+        #draw vertical lines
+        for i in range(0, self.row_length+1):
+            line_width = LINE_WIDTH
+            if (i) % 3 == 0:
+               line_width = LINE_WIDTH_BOLD
+            pygame.draw.line( screen, LINE_COLOR, (i * self.square_size+starting_point_x, starting_point_y), (i * self.square_size+starting_point_x, self.height+starting_point_y), line_width)
 
 
     def select(self, row, col):
@@ -100,11 +104,10 @@ class Board:
  
 
 if __name__ == '__main__':
-
     pygame.init()
     screen = pygame.display.set_mode()
     screen.fill((255,255,255))
-    board = Board(1000,1000,screen,0)
+    board = Board(800,800,screen,0)
 
     while True:
         for event in pygame.event.get():
