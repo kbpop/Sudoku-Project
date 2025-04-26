@@ -94,7 +94,7 @@ class Board:
         return None
 
     def place_number(self, value):
-        #'''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''
+        '''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''
 
         return None
 
