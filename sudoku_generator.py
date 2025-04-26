@@ -25,7 +25,7 @@ class SudokuGenerator:
     def __init__(self, row_length, removed_cells):
         self.row_length = row_length
         self.removed_cells = removed_cells
-        self.board = [[{"row": r, "col": c, "val":'0'} for c in range(0,row_length)] for r in range(0,row_length)]
+        self.board = [[0 for c in range(0,row_length)] for r in range(0,row_length)]
         self.box_length	= int(row_length**0.5)
 
     '''
@@ -35,7 +35,7 @@ class SudokuGenerator:
 	Return: list[list]
     '''
     def get_board(self):
-        return [[c['val'] for c in r] for r in self.board]
+        return [[c for c in r] for r in self.board]
 
     '''
 	Displays the board to the console
@@ -44,9 +44,9 @@ class SudokuGenerator:
 	Parameters: None
 	Return: None
     '''
-    def print_board(self):
+    def print_board(self): 
         print('Board: \n')
-        print(f'\n{"-"*4*self.row_length}\n'.join([' | '.join([c['val'] for c in r]) for r in self.board]))
+        print(f'\n{"-"*4*self.row_length}\n'.join([' | '.join([str(c) for c in r]) for r in self.board]))
         
 
     '''
@@ -60,7 +60,7 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_row(self, row, num):
-        return str(num) not in {c['val'] for c in self.board[row]}
+        return num not in {c for c in self.board[row]}
 
     '''
 	Determines if num is contained in the specified column (vertical) of the board
@@ -73,7 +73,7 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_col(self, col, num):
-        return str(num) not in {r[col]['val'] for r in self.board}
+        return num not in {r[col] for r in self.board}
 
     '''
 	Determines if num is contained in the 3x3 box specified on the board
@@ -94,7 +94,7 @@ class SudokuGenerator:
                 if r >= self.row_length or c >= self.row_length:
                     continue
                 else:
-                    h.add(self.board[r][c]['val'])
+                    h.add(self.board[r][c])
         return num not in h
     
     '''
@@ -121,8 +121,15 @@ class SudokuGenerator:
 	Return: None
     '''
     def fill_box(self, row_start, col_start):
-        pass
-    
+        set = {}
+        for r in range(row_start,row_start+2):
+            for c in range(col_start,col_start+2):
+                temp = random.randint(1,9)
+                while temp in set:
+                    temp = random.randint(1,9)
+                set.add(temp)
+                self.board[r][c]['val'] = temp
+
     '''
     Fills the three boxes along the main diagonal of the board
     These are the boxes which start at (0,0), (3,3), and (6,6)
@@ -131,8 +138,13 @@ class SudokuGenerator:
 	Return: None
     '''
     def fill_diagonal(self):
-        pass
-
+        set = {0}
+        for i in range(self.row_length):
+            temp = random.randint(1,9)
+            while temp in set:
+                temp = random.randint(1,9)
+            set.add(temp)
+            self.board[i][i] = temp
     '''
     DO NOT CHANGE
     Provided for students
@@ -220,9 +232,9 @@ def generate_sudoku(size, removed):
     board = sudoku.get_board()
     sudoku.remove_cells()
     board = sudoku.get_board()
-    return board
+    return sudoku
 
 
 if __name__ == '__main__':
-    board = SudokuGenerator(9,0)
+    board = generate_sudoku(9,0)
     board.print_board()
