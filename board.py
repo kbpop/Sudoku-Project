@@ -30,6 +30,10 @@ class Board:
         self.height = height
         self.screen = screen
         self.difficult = difficulty
+        self.cells=[]
+        self.selected_cell=None
+
+
 
     def draw(self):
         self.screen.fill((255,255,255))
@@ -42,7 +46,7 @@ class Board:
             pygame.draw.line(self.screen, (0,0,0), (i*(self.width//9),0), (i*(self.width//9), self.height), thickness)
         for row in self.cells:
             for cell in row:
-                cell.draw
+                cell.draw()
         #'''Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes. Draws every cell on this board.'''
         # draw horizontal lines
         #for i in range(1, BOARD_ROWS):
@@ -54,33 +58,43 @@ class Board:
         return None
 
     def select(self, row, col):
-        '''Marks the cell at (row, col) in the board as the current selected cell.
-	Once a cell has been selected, the user can edit its value or sketched value.'''
+        if self.selected_cell:
+            self.selected_cell.selected=False
+        self.selected_cell=self.cells[row][col]
+        self.selected_cell.selected=True
+
+        #'''Marks the cell at (row, col) in the board as the current selected cell.
+	#Once a cell has been selected, the user can edit its value or sketched value.'''
 
         return None
 
     def click(self, x, y):
-        '''If a tuple of (x,y) coordinates is within the displayed board,
-        this function returns a tuple of the (row, col) of the cell which was clicked.
-        Otherwise, this function returns None.'''
-
+        #'''If a tuple of (x,y) coordinates is within the displayed board,
+        #this function returns a tuple of the (row, col) of the cell which was clicked.
+        #Otherwise, this function returns None.'''
+        if x<self.width and y<self.height:
+            row=y//(self.height//9)
+            col=x//(self.width//9)
+            return row, col
         return None
 
     def clear(self):
-        '''Clears the value cell.
-        Note that the user can only remove the cell values and
-        sketched values that are filled by themselves.'''
-
+        #'''Clears the value cell.
+        #Note that the user can only remove the cell values and
+        #sketched values that are filled by themselves.'''
+        if self.selected_cell and self.selected_cell.value==0:
+            self.selected_cell.sketched_value=0
         return None
 
     def sketch(self, value):
-        '''Sets the sketched value of the current selected cell equal to the user entered value.
-	It will be displayed at the top left corner of the cell using the draw() function.'''
-
+        #'''Sets the sketched value of the current selected cell equal to the user entered value.
+	#It will be displayed at the top left corner of the cell using the draw() function.'''
+        if self.selected_cell:
+            self.selected_cell.set_sketched_value(value)
         return None
 
     def place_number(self, value):
-        '''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''
+        #'''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''
 
         return None
 
