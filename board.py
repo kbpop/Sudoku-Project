@@ -2,24 +2,7 @@ import pygame
 from cell import Cell
 from sudoku_generator import generate_sudoku
 
-WIDTH = 600
-HEIGHT = 600
-LINE_WIDTH = 15
-WIN_LINE_WIDTH = 15
-BOARD_ROWS = 3
-BOARD_COLS = 3
-SQUARE_SIZE = 200
-CIRCLE_RADIUS = 60
-CIRCLE_WIDTH = 15
-CROSS_WIDTH = 25
-SPACE = 55
-RED = (255, 0, 0)
-BG_COLOR = (255, 255, 245)
-LINE_COLOR = (245, 152, 66)
-CIRCLE_COLOR = (155, 155, 155)
-CROSS_COLOR = (66, 66, 66)
-CHIP_FONT = 400
-GAME_OVER_FONT = 40
+
 
 
 class Board:
@@ -34,17 +17,41 @@ class Board:
         self.selected_cell=None
         self.original_board=[]
 
+        if difficulty=="easy":
+            removed=30
+        elif difficulty=="medium":
+            removed =40
+        else:
+            removed=50
+
+        sudoku=generate_sudoku(9,removed)
+        self.original_board=sudoku
+
+        for row in range (9):
+            row_cells=[]
+            for col in range(9):
+                value=sudoku[row][col]
+                cell=Cell(value,row,col,screen)
+                row_cells.append(cell)
+            self.cells.append(row_cells)
+
+
+
 
 
     def draw(self):
         self.screen.fill((255,255,255))
+
+        cell_size=self.width//9
+
         for i in range(10):
             if i%3==0:
                 thickness=4
             else:
                 thickness=1
+            pygame.draw.line(self.screen, (0, 0, 0), (i * (self.width // 9), 0), (i * (self.width // 9), self.height), thickness)
             pygame.draw.line(self.screen, (0,0,0), (0,i*(self.height//9)), (self.width,i*(self.height//9)), thickness)
-            pygame.draw.line(self.screen, (0,0,0), (i*(self.width//9),0), (i*(self.width//9), self.height), thickness)
+
         for row in self.cells:
             for cell in row:
                 cell.draw()
@@ -56,7 +63,7 @@ class Board:
         #for i in range(1, BOARD_COLS):
             #pygame.draw.line(screen, LINE_COLOR, (i * SQUARE_SIZE, 0), (i * SQUARE_SIZE, HEIGHT), LINE_WIDTH)
 
-        return None
+
 
     def select(self, row, col):
         if self.selected_cell:
@@ -67,7 +74,7 @@ class Board:
         #'''Marks the cell at (row, col) in the board as the current selected cell.
 	#Once a cell has been selected, the user can edit its value or sketched value.'''
 
-        return None
+
 
     def click(self, x, y):
         #'''If a tuple of (x,y) coordinates is within the displayed board,
@@ -85,14 +92,14 @@ class Board:
         #sketched values that are filled by themselves.'''
         if self.selected_cell and self.selected_cell.value==0:
             self.selected_cell.sketched_value=0
-        return None
+
 
     def sketch(self, value):
         #'''Sets the sketched value of the current selected cell equal to the user entered value.
 	#It will be displayed at the top left corner of the cell using the draw() function.'''
         if self.selected_cell:
             self.selected_cell.set_sketched_value(value)
-        return None
+
 
     def place_number(self, value):
         if self.selected_cell:
@@ -100,7 +107,7 @@ class Board:
 
         #'''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''
 
-        return None
+
 
     def reset_to_original(self):
         #'''Resets all cells in the board to their original values (0 if cleared, otherwise the corresponding digit).'''
@@ -108,7 +115,7 @@ class Board:
             for col in range(9):
                 self.cells[row][col].value=self.original_board[row][col]
                 self.cells[row][col].sketched_value=0
-        return None
+
 
     def is_full(self):
         for row in self.cells:
@@ -116,7 +123,7 @@ class Board:
                 if cell.value==0:
                     return False
         #'''Returns a Boolean value indicating whether the board is full or not.'''
-        return None
+        return True
 
     def update_board(self):
         board=[]
@@ -164,17 +171,21 @@ class Board:
 
 
 if __name__ == '__main__':
-
     pygame.init()
-    WIDTH,HEIGHT=600,600
-    screen = pygame.display.set_mode((WIDTH,HEIGHT))
-    screen.fill((255, 255, 255))
-    board = Board(1000, 1000, screen, 0)
 
-    while True:
+    WIDTH,HEIGHT=540,540
+    screen = pygame.display.set_mode((WIDTH,HEIGHT))
+    pygame.display.set_caption("Sudoku Board")
+
+    board = Board(540, 540, screen, "easy")
+    running=True
+
+    while running:
         for event in pygame.event.get():
-            if event.type == pygame.quit:
+            if event.type == pygame.QUIT:
                 pygame.quit()
 
-        pygame.display.update()
+        screen.fill((255,255,255))
         board.draw()
+        pygame.display.update()
+    pygame.Quit()
