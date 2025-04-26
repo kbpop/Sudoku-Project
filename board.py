@@ -17,12 +17,6 @@ class Board:
         self.selected_cell=None
         self.original_board=[]
 
-        if difficulty=="easy":
-            removed=30
-        elif difficulty=="medium":
-            removed =40
-        else:
-            removed=50
 
         sudoku=generate_sudoku(9,removed)
         self.original_board=sudoku
