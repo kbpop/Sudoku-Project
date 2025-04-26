@@ -40,6 +40,9 @@ class Board:
                 thickness=1
             pygame.draw.line(self.screen, (0,0,0), (0,i*(self.height//9)), (self.width,i*(self.height//9)), thickness)
             pygame.draw.line(self.screen, (0,0,0), (i*(self.width//9),0), (i*(self.width//9), self.height), thickness)
+        for row in self.cells:
+            for cell in row:
+                cell.draw
         #'''Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes. Draws every cell on this board.'''
         # draw horizontal lines
         #for i in range(1, BOARD_ROWS):
