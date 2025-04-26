@@ -19,15 +19,7 @@ class Board:
 
 
 
-        self.original_board=sudoku
 
-        for row in range (9):
-            row_cells=[]
-            for col in range(9):
-                value=sudoku[row][col]
-                cell=Cell(value,row,col,screen)
-                row_cells.append(cell)
-            self.cells.append(row_cells)
 
 
 
