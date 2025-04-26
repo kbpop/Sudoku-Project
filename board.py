@@ -145,7 +145,6 @@ class Board:
                     return False
 
         #'''Check whether the Sudoku board is solved correctly.'''
-
         return True
 
 
