@@ -154,7 +154,6 @@ if __name__ == '__main__':
 
     WIDTH,HEIGHT=540,540
     screen = pygame.display.set_mode((WIDTH,HEIGHT))
-    pygame.display.set_caption("Sudoku Board")
 
     board = Board(540, 540, screen, "easy")
     running=True
@@ -167,4 +166,4 @@ if __name__ == '__main__':
         screen.fill((255,255,255))
         board.draw()
         pygame.display.update()
-    pygame.Quit()
+    pygame.quit()
