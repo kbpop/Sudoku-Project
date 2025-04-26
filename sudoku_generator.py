@@ -60,6 +60,7 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_row(self, row, num):
+        # print(f'{num} is valid in row : { {c for c in self.board[row]}}:{num not in {c for c in self.board[row]}}')
         return num not in {c for c in self.board[row]}
 
     '''
@@ -73,6 +74,7 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_col(self, col, num):
+        # print(f'{num} in valid in col: { {r[col] for r in self.board}}:{num not in {r[col] for r in self.board}}')
         return num not in {r[col] for r in self.board}
 
     '''
@@ -88,13 +90,14 @@ class SudokuGenerator:
 	Return: boolean
     '''
     def valid_in_box(self, row_start, col_start, num):
-        h = {0}
-        for r in range(row_start,row_start+2):
-            for c in range(row_start,row_start+2):
+        h = {-1}
+        for r in range(row_start,row_start+3):
+            for c in range(col_start,col_start+3):
                 if r >= self.row_length or c >= self.row_length:
                     continue
                 else:
                     h.add(self.board[r][c])
+        # print(f'{num} not in box: { h}:{num not in h}')
         return num not in h
     
     '''
@@ -121,7 +124,7 @@ class SudokuGenerator:
 	Return: None
     '''
     def fill_box(self, row_start, col_start):
-        set = {0}
+        set = {-1}
         for r in range(row_start,row_start+3):
             for c in range(col_start,col_start+3):
                 temp = random.randint(1,9)
@@ -140,6 +143,7 @@ class SudokuGenerator:
     def fill_diagonal(self):
         for i in range(0, self.row_length, self.box_length):
             self.fill_box(i,i)
+        self.print_board()
     '''
     DO NOT CHANGE
     Provided for students
@@ -232,8 +236,5 @@ def generate_sudoku(size, removed):
 
 if __name__ == '__main__':
     sudoku = SudokuGenerator(9, 0)
-    sudoku.print_board()
     sudoku.fill_values()
     sudoku.print_board()
-    board = sudoku.get_board()
-    print(board)
