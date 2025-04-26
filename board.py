@@ -27,23 +27,40 @@ class Board:
         self.height = height
         self.screen = screen   
         self.difficult = difficulty    
+        self.cells = [[Cell(c,r_index,c_index,screen) for c_index, c in enumerate(r)] for r_index, r in enumerate(generate_sudoku(9,difficulty)) ]
         self.square_size = width / 9
 
     def draw(self):
         '''Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes. Draws every cell on this board.'''
-        #draw horizontal lines
+        self.draw_horizontal_grid_lines()
+        self.draw_vertical_grid_lines()
+        self.draw_cells()
+        
+    def draw_horizontal_grid_lines(self):
+        '''Draws the horizontal grid lines'''
         for i in range(0, self.row_length+1):
             line_width = LINE_WIDTH
             if (i) % 3 == 0:
                line_width = LINE_WIDTH_BOLD 
-            pygame.draw.line(screen, LINE_COLOR, (starting_point_x, i * self.square_size+starting_point_y), (self.width+starting_point_x, i * self.square_size+starting_point_y), line_width)
+            pygame.draw.line(self.screen, LINE_COLOR, (starting_point_x, i * self.square_size+starting_point_y), (self.width+starting_point_x, i * self.square_size+starting_point_y), line_width)
 
-        #draw vertical lines
+    def draw_vertical_grid_lines(self):
+        '''Draws the vertical grid lines'''
         for i in range(0, self.row_length+1):
             line_width = LINE_WIDTH
             if (i) % 3 == 0:
                line_width = LINE_WIDTH_BOLD
-            pygame.draw.line( screen, LINE_COLOR, (i * self.square_size+starting_point_x, starting_point_y), (i * self.square_size+starting_point_x, self.height+starting_point_y), line_width)
+            pygame.draw.line( self.screen, LINE_COLOR, (i * self.square_size+starting_point_x, starting_point_y), (i * self.square_size+starting_point_x, self.height+starting_point_y), line_width)
+    
+    def draw_cells(self):
+        for r in self.cells:
+            for c in r:
+                c.draw()
+                
+
+
+
+
 
 
     def select(self, row, col):
@@ -107,7 +124,7 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode()
     screen.fill((255,255,255))
-    board = Board(800,800,screen,0)
+    board = Board(800,800,screen,1)
 
     while True:
         for event in pygame.event.get():
