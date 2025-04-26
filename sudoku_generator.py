@@ -206,7 +206,11 @@ class SudokuGenerator:
 	Return: None
     '''
     def remove_cells(self):
-        pass
+        for _ in range(self.removed_cells):
+            r, c = random.randint(0,self.row_length-1), random.randint(0,self.row_length-1)
+            while self.board[r][c] == 0:
+                r, c = random.randint(0,self.row_length-1), random.randint(0,self.row_length-1)
+            self.board[r][c] = 0
 
 '''
 DO NOT CHANGE
@@ -233,8 +237,10 @@ def generate_sudoku(size, removed):
 
 
 if __name__ == '__main__':
-    sudoku = SudokuGenerator(9, 0)
+    sudoku = SudokuGenerator(9, 81)
     sudoku.fill_diagonal()
     sudoku.fill_remaining(0,sudoku.box_length)
+    sudoku.print_board()
+    sudoku.remove_cells()
     sudoku.print_board()
     
