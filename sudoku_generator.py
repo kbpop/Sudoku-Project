@@ -252,11 +252,13 @@ def generate_sudoku(size, removed):
     board = sudoku.get_board()
     return board
 
+def generate_sudoku2(size, removed):
+    sudoku = SudokuGenerator(size, removed)
+    sudoku.fill_values()
+    sudoku.remove_cells()
+    board = sudoku.get_board()
+    return sudoku
 
 if __name__ == '__main__':
-    sudoku = SudokuGenerator(9, 81)
-    sudoku.fill_diagonal()
-    sudoku.fill_remaining(0, sudoku.box_length)
-    sudoku.print_board()
-    sudoku.remove_cells()
+    sudoku = generate_sudoku2(9, 30)
     sudoku.print_board()
