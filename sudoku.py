@@ -59,6 +59,59 @@ def main_menu(screen):
                 if event.key==pygame.K_3:
                     return"hard"
 
+def win_screen(screen):
+    font = pygame.font.SysFont(None, 60)
+    small_font = pygame.font.SysFont(None, 40)
+
+    while True:
+        screen.fill((255, 255, 255))
+
+        win_text = font.render("You Solved It!", True, (0, 128, 0))
+        instruction_text = small_font.render("Press ENTER to play again or ESC to quit.", True, (0, 0, 0))
+
+        screen.blit(win_text, (screen.get_width()//2 - win_text.get_width()//2, 200))
+        screen.blit(instruction_text, (screen.get_width()//2 - instruction_text.get_width()//2, 300))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return True  # Restart
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    exit()
+def game_over_screen(screen):
+    font = pygame.font.SysFont(None, 60)
+    small_font = pygame.font.SysFont(None, 40)
+
+    while True:
+        screen.fill((255, 255, 255))
+
+        over_text = font.render("Game Over!", True, (255, 0, 0))
+        instruction_text = small_font.render("Press ENTER to try again or ESC to quit.", True, (0, 0, 0))
+
+        screen.blit(over_text, (screen.get_width()//2 - over_text.get_width()//2, 200))
+        screen.blit(instruction_text, (screen.get_width()//2 - instruction_text.get_width()//2, 300))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    return True  # Restart
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    exit()
+
 
 
 def main():
@@ -105,6 +158,14 @@ def main():
                         board.sketch(9)
                     if event.key==pygame.K_RETURN:
                         board.place_number(board.selected_cell.sketched_value)
+                        if board.is_full():
+                            if win_screen(screen):
+                                difficulty=main_menu(screen)
+                                board=Board(WIDTH,HEIGHT, screen, difficulty)
+                            else:
+                                if game_over_screen(screen):
+                                    difficulty=main_menu(screen)
+                                    board=Board(WIDTH,HEIGHT,screen, difficulty)
                     if event.key==pygame.K_BACKSPACE:
                         board.clear()
 
