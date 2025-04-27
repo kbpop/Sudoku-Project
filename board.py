@@ -74,9 +74,9 @@ class Board:
         this function returns a tuple of the (row, col) of the cell which was clicked. 
         Otherwise, this function returns None.'''
 
-        if x > starting_point_x and x < (starting_point_x+board_width) and y > starting_point_y and y < (starting_point_y+board_height):
-            r = int((x-starting_point_x)//(board_width/9))
-            c = int((y-starting_point_y)//(board_height/9))
+        if x > starting_point_x and x < (starting_point_x+self.width) and y > starting_point_y and y < (starting_point_y+self.height):
+            r = int((x-starting_point_x)//(self.width/9))
+            c = int((y-starting_point_y)//(self.height/9))
             self.select(r,c)
         else:
             self.select_cell = None
@@ -99,7 +99,7 @@ class Board:
     def place_number(self):
         '''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''    
         if self.selected_cell and self.sketched_value:
-            self.selected_cell.set_cell_value(int(board.sketched_value))
+            self.selected_cell.set_cell_value(int(self.sketched_value))
             self.sketched_value = None
 
     def reset_to_original(self):
@@ -124,11 +124,8 @@ class Board:
 
     def check_rows(self):
             full_set = {i for i in range(1,self.row_length+1)}
-            print(full_set)
             for r in self.cells:
                 com = {c.value for c in r}
-                print(f'this is the set: {set}')
-                print(f'this is the com: {com}')
                 if {c.value for c in r} != full_set:
                     return False
             return True
@@ -144,11 +141,10 @@ class Board:
                 for c in range(0,self.row_length):
                     if r == r_init:
                         if c >= c_init:
-                            if self.cells[r][c].value == 0 and self.selected_cell is not self.cells[r][c]:
-                                print('found a cell')
+                            if self.cells[r][c].editable and self.selected_cell is not self.cells[r][c]:
                                 self.select(r,c)
                     else:
-                        if self.cells[r][c].value == 0 and self.selected_cell is not self.cells[r][c]:
+                        if self.cells[r][c].editable and self.selected_cell is not self.cells[r][c]:
                             self.select(r,c)
     def go_left(self):
         if self.selected_cell:
@@ -157,13 +153,36 @@ class Board:
                 for c in range(self.row_length-1,0,-1):
                     if r == r_init:
                         if c < c_init:
-                            if self.cells[r][c].value == 0 and self.selected_cell is not self.cells[r][c]:
+                            if self.cells[r][c].editable and self.selected_cell is not self.cells[r][c]:
                                 self.select(r,c)
                     else:
-                        if self.cells[r][c].value == 0 and self.selected_cell is not self.cells[r][c]:
+                        if self.cells[r][c].editable and self.selected_cell is not self.cells[r][c]:
                             self.select(r,c)
-                    
 
+    def game_animation(self, event):
+        if event.type == pygame.quit:
+                pygame.quit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            x,y = event.pos
+            self.click(x,y)
+        if event.type == pygame.KEYDOWN:
+            if event.key > 0x10000:
+                None
+            elif chr(event.key).isdigit():
+                char = chr(event.key)
+                if char != '0':
+                    self.sketch(char)
+            elif event.key == pygame.K_RETURN:
+                    self.place_number()
+                    if self.check_board():
+                        return True
+            elif event.key == pygame.K_RIGHT or event.key == 100:
+                self.go_right()                    
+            elif event.key == pygame.K_LEFT or event.key==97:
+                self.go_left()
+            elif event.key == pygame.K_BACKSPACE:
+                self.clear()
+     
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode()
@@ -174,29 +193,7 @@ if __name__ == '__main__':
 
     while True:
         for event in pygame.event.get():
-            if event.type == pygame.quit:
-                pygame.quit()
-
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                x,y = event.pos
-                board.click(x,y)
-            if event.type == pygame.KEYDOWN:
-                if event.key > 0x10000:
-                    continue
-                elif chr(event.key).isdigit():
-                    char = chr(event.key)
-                    if char != '0':
-                        board.sketch(char)
-                elif event.key == pygame.K_RETURN:
-                        board.place_number()
-                        if board.check_board():
-                            print("You Win")
-                elif event.key == pygame.K_RIGHT or event.key == 100:
-                    board.go_right()                    
-                elif event.key == pygame.K_LEFT or event.key==97:
-                    board.go_left()
-                elif event.key == pygame.K_BACKSPACE:
-                    board.clear()
+            board.game_animation(event)
+        board.draw()
 
         pygame.display.update()
-        board.draw()
