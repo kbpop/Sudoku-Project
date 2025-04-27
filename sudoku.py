@@ -28,14 +28,47 @@
 # test = Cell(1,1,1,1)
 import pygame
 from board import Board
+
+def main_menu(screen):
+    font=pygame.font.SysFont(None,60)
+    small_font=pygame.font.SysFont(None,40)
+    while True:
+        screen.fill((255,255,255))
+        title=font.render("Sudoku Game", True, (0,0,0))
+        screen.blit(title, (screen.get_width()//2-title.get_width()//2, 100))
+
+        easy=small_font.render("Press 1 for Easy", True, (0,0,0))
+        medium=small_font.render("Press 2 for Medium", True, (0,0,0))
+        hard=small_font.render("Press 3 for HARD", True, (0,0,0))
+
+        screen.blit(easy,(screen.get_width()//2-easy.get_width()//2,250))
+        screen.blit(medium, (screen.get_width() // 2 - medium.get_width() // 2, 300))
+        screen.blit(hard, (screen.get_width() // 2 - hard.get_width() // 2, 350))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type==pygame.QUIT():
+                pygame.quit()
+                exit()
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_1:
+                    return"easy"
+                if event.key==pygame.K_2:
+                    return"medium"
+                if event.key==pygame.K_3:
+                    return"hard"
+
+
+
 def main():
     pygame.init()
     WIDTH,HEIGHT=540,540
     screen=pygame.display.set_mode((WIDTH,HEIGHT))
     pygame.display.set_caption("Sudoku")
-    difficulty="easy"
+    difficulty=main_menu(screen)
 
-    board=Board(WIDTH,HEIGHT,screen, "easy")
+    board=Board(WIDTH,HEIGHT,screen, difficulty)
 
 
     running=True
