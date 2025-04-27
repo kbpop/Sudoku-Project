@@ -27,14 +27,15 @@
 # screen.fill((255,255,255))
 # test = Cell(1,1,1,1)
 import pygame
-import board import board
+from board import Board
 def main():
     pygame.init()
     WIDTH,HEIGHT=540,540
     screen=pygame.display.set_mode((WIDTH,HEIGHT))
     pygame.display.set_caption("Sudoku")
+    difficulty="easy"
 
-    board=board(WIDTH,HEIGHT,screen, "easy")
+    board=Board(WIDTH,HEIGHT,screen, "easy")
 
 
     running=True
@@ -48,8 +49,38 @@ def main():
                 clicked=board.click(pos[0], pos[1])
                 if clicked:
                     row,col=clicked
-                    board.select(rol,col)
-            if event.tpe==pygame.KEYDOWN:
+                    board.select(row,col)
+            if event.type==pygame.KEYDOWN:
+                if board.selected_cell:
+                    if event.key==pygame.K_1:
+                        board.sketch(1)
+                    if event.key==pygame.K_2:
+                        board.sketch(2)
+                    if event.key==pygame.K_3:
+                        board.sketch(3)
+                    if event.key == pygame.K_4:
+                        board.sketch(4)
+                    if event.key == pygame.K_5:
+                        board.sketch(5)
+                    if event.key == pygame.K_6:
+                        board.sketch(6)
+                    if event.key == pygame.K_7:
+                        board.sketch(7)
+                    if event.key == pygame.K_8:
+                        board.sketch(8)
+                    if event.key == pygame.K_9:
+                        board.sketch(9)
+                    if event.key==pygame.K_RETURN:
+                        board.place_number(board.selected_cell.sketched_value)
+                    if event.key==pygame.K_BACKSPACE:
+                        board.clear()
+
+        screen.fill((255,255,255))
+        board.draw()
+        pygame.display.update()
+    pygame.quit()
+if __name__=="__main__":
+    main()
 
 
 

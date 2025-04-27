@@ -17,6 +17,24 @@ class Board:
         self.selected_cell=None
         self.original_board=[]
 
+        if difficulty=="easy":
+            removed=30
+        if difficulty=="medium":
+            removed=40
+        else:
+            removed=50
+
+        sudoku=generate_sudoku(9,removed)
+        self.original_board=sudoku
+
+        for row in range(9):
+            row_cells=[]
+            for col in range(9):
+                value=sudoku[row][col]
+                cell=Cell(value,row,col,screen)
+                row_cells.append(cell)
+            self.cells.append(row_cells)
+
 
     def draw(self):
         self.screen.fill((255,255,255))
