@@ -29,6 +29,7 @@
 import pygame
 from board import Board
 
+
 def main_menu(screen):
     font=pygame.font.SysFont(None,60)
     small_font=pygame.font.SysFont(None,40)
@@ -175,6 +176,5 @@ def main():
     pygame.quit()
 if __name__=="__main__":
     main()
-
 
 
