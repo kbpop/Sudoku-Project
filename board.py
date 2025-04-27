@@ -30,6 +30,7 @@ class Board:
         self.cells = [[Cell(c,r_index,c_index,screen,c==0) for c_index, c in enumerate(r)] for r_index, r in enumerate(generate_sudoku(9,difficulty)) ]
         self.square_size = width / 9
         self.selected_cell = None
+        self.sketched_value = None
 
     def draw(self):
         '''Draws an outline of the Sudoku grid, with bold lines to delineate the 3x3 boxes. Draws every cell on this board.'''
@@ -57,13 +58,14 @@ class Board:
         for r in self.cells:
             for c in r:
                 if c is self.selected_cell:
-                    c.draw_selected()
+                    c.draw_selected(self.sketched_value)
                 else:
                     c.draw()
 
     def select(self, row, col):
         '''Marks the cell at (row, col) in the board as the current selected cell.
 	Once a cell has been selected, the user can edit its value or sketched value.'''
+        self.sketched_value = None
         if self.cells[row][col].editable:
             self.selected_cell = self.cells[row][col]
 
@@ -83,18 +85,22 @@ class Board:
         '''Clears the value cell. 
         Note that the user can only remove the cell values and 
         sketched values that are filled by themselves.'''    
-
-        return None
+        if self.selected_cell:
+            self.selected_cell.set_cell_value(0)
+            self.sketched_value = None
+        
 
     def sketch(self, value):
         '''Sets the sketched value of the current selected cell equal to the user entered value.
 	It will be displayed at the top left corner of the cell using the draw() function.'''
+        self.sketched_value = value
 
 
-    def place_number(self, value):
+    def place_number(self):
         '''Sets the value of the current selected cell equal to the user entered value. Called when the user presses the Enter key.'''    
-        if self.selected_cell:
-            self.selected_cell.set_cell_value(int(value))
+        if self.selected_cell and self.sketched_value:
+            self.selected_cell.set_cell_value(int(board.sketched_value))
+            self.sketched_value = None
 
     def reset_to_original(self):
         '''Resets all cells in the board to their original values (0 if cleared, otherwise the corresponding digit).'''    
@@ -116,18 +122,55 @@ class Board:
 
         return None
 
+    def check_rows(self):
+            full_set = {i for i in range(1,self.row_length+1)}
+            print(full_set)
+            for r in self.cells:
+                com = {c.value for c in r}
+                print(f'this is the set: {set}')
+                print(f'this is the com: {com}')
+                if {c.value for c in r} != full_set:
+                    return False
+            return True
+
     def check_board(self):
         '''Check whether the Sudoku board is solved correctly.'''
+        return self.check_rows()
 
-        return False
-    
+    def go_right(self):
+        if self.selected_cell:
+            r_init, c_init = self.selected_cell.row, self.selected_cell.col
+            for r in range(r_init,self.row_length):
+                for c in range(0,self.row_length):
+                    if r == r_init:
+                        if c >= c_init:
+                            if self.cells[r][c].value == 0 and self.selected_cell is not self.cells[r][c]:
+                                print('found a cell')
+                                self.select(r,c)
+                    else:
+                        if self.cells[r][c].value == 0 and self.selected_cell is not self.cells[r][c]:
+                            self.select(r,c)
+    def go_left(self):
+        if self.selected_cell:
+            r_init, c_init = self.selected_cell.row, self.selected_cell.col
+            for r in range(r_init,0, -1):
+                for c in range(self.row_length-1,0,-1):
+                    if r == r_init:
+                        if c < c_init:
+                            if self.cells[r][c].value == 0 and self.selected_cell is not self.cells[r][c]:
+                                self.select(r,c)
+                    else:
+                        if self.cells[r][c].value == 0 and self.selected_cell is not self.cells[r][c]:
+                            self.select(r,c)
+                    
+
 if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode()
     screen.fill((255,255,255))
     board_width = 800
     board_height = 800
-    board = Board(board_width,board_height,screen,10)
+    board = Board(board_width,board_height,screen,4)
 
     while True:
         for event in pygame.event.get():
@@ -137,16 +180,23 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 x,y = event.pos
                 board.click(x,y)
-
             if event.type == pygame.KEYDOWN:
                 if event.key > 0x10000:
-                    None
+                    continue
                 elif chr(event.key).isdigit():
                     char = chr(event.key)
                     if char != '0':
-                        board.place_number(char)
+                        board.sketch(char)
                 elif event.key == pygame.K_RETURN:
-                    print("Enter key pressed!")
+                        board.place_number()
+                        if board.check_board():
+                            print("You Win")
+                elif event.key == pygame.K_RIGHT or event.key == 100:
+                    board.go_right()                    
+                elif event.key == pygame.K_LEFT or event.key==97:
+                    board.go_left()
+                elif event.key == pygame.K_BACKSPACE:
+                    board.clear()
 
         pygame.display.update()
         board.draw()
