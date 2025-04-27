@@ -48,7 +48,7 @@ def main_menu(screen):
         pygame.display.update()
 
         for event in pygame.event.get():
-            if event.type==pygame.QUIT():
+            if event.type==pygame.QUIT:
                 pygame.quit()
                 exit()
             if event.type==pygame.KEYDOWN:
